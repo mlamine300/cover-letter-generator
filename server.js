@@ -231,13 +231,15 @@ ${name}
 </html>
 `;
 
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                "--no-sandbox",
-                "--disable-setuid-sandbox"
-            ]
-        });
+    const chromium = require("@sparticuz/chromium");
+const puppeteer = require("puppeteer-core");
+
+const browser = await puppeteer.launch({
+    executablePath: await chromium.executablePath(),
+    headless: true,
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport
+});
 
         const page = await browser.newPage();
 

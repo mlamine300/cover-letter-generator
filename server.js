@@ -334,6 +334,8 @@ res.json({
     }
 });
 
-app.listen(3000,()=>{
+const server=app.listen(3000,()=>{
     console.log("Server started");
 });
+server.keepAliveTimeout = 250000; // 120 seconds
+server.headersTimeout = 250000;

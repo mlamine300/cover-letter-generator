@@ -1,0 +1,168 @@
+{
+   "cv":{
+      "titre":"Alternant Assistant Transit & Douane",
+      "profil":"Professionnel expérimenté de la logistique internationale et de l'analyse de données, admissible au Bachelor Business International de MBway Montpellier. Actuellement Auditeur Logistique, je recherche une alternance de 12 mois à Sète pour un poste d'Assistant(e) Transit et Douane, afin de consolider mes compétences en gestion des flux internationaux, opérations douanières et optimisation des chaînes logistiques. Ma rigueur, mon sens du service client et ma maîtrise de l'anglais C1 sont des atouts pour évoluer dans un environnement international stimulant.",
+      "nom":"LAOUFI MOHAMED LAMINE",
+      "num":"+213 676 21 77 01",
+      "address":"Saint-Quentin, 02100 France",
+      "email":"laoufi.mohamed.lamine@gmail.com",
+      "linkedin":"linkedin.com/in/mohamed-laoufi",
+      "siteweb":"laoufi-mohamed-lamine.vercel.app/",
+      "github":"github.com/mlamine300",
+      "competences":[
+         {
+            "categorie":"Logistique & Transit International",
+            "liste":[
+               "Gestion des flux internationaux (import/export, multimodal)",
+               "Conformité douanière & Réglementations (incoterms)",
+               "Optimisation des plans d'acheminement & chaînes logistiques",
+               "Suivi des opérations de transport & acheminement",
+               "Chiffrage tarifaire & gestion de dossiers transport",
+               "Gestion des anomalies, litiges & réclamations",
+               "Coordination des acteurs (transporteurs, clients, douanes)",
+               "Connaissance des outils de gestion du transport (TMS, EDI - capacité à apprendre rapidement)"
+            ]
+         },
+         {
+            "categorie":"Analyse de Données & Optimisation",
+            "liste":[
+               "Analyse de performance & KPI (taux de service, délais, rendement)",
+               "Modélisation de systèmes logistiques",
+               "Optimisation des processus & amélioration continue",
+               "Aide à la décision stratégique et opérationnelle",
+               "Power BI, Excel avancé, Python, SQL",
+               "Business Intelligence & Data Visualization"
+            ]
+         },
+         {
+            "categorie":"Soft Skills",
+            "liste":[
+               "Rigueur & Organisation (gestion multi-dossiers)",
+               "Excellent relationnel & Aisance téléphonique",
+               "Sens du service client & Goût du challenge",
+               "Esprit analytique & Résolution de problèmes",
+               "Travail en équipe & Adaptabilité",
+               "Gestion des priorités"
+            ]
+         },
+         {
+            "categorie":"Informatique",
+            "liste":[
+               "SQL",
+               "ERP / WMS",
+               "JavaScript, TypeScript, React, Next.js (pour montrer les compétences techniques générales)",
+               "MongoDB, Firebase"
+            ]
+         },
+         {
+            "categorie":"Langues",
+            "liste":[
+               "Arabe (Langue maternelle)",
+               "Français (TCF C1 - professionnel)",
+               "Anglais (EF SET C1 - professionnel, bien au-delà du B2 requis)"
+            ]
+         }
+      ],
+      "experiences":[
+         {
+            "poste":"Auditeur Logistique",
+            "entreprise":"ANDERSON SPA",
+            "description":[
+                "Réalisation d’audits des processus logistiques (stockage, transport, flux internes) afin d’identifier les inefficacités et leviers d’amélioration",
+                "Analyse des performances opérationnelles à travers des indicateurs clés (KPI) et formulation de recommandations stratégiques",
+                "Identification des risques opérationnels et mise en place de plans d’actions correctifs",
+                "Participation à la standardisation des processus et à l’amélioration de la qualité de service"
+            ],
+            "datedebut":"11/2023",
+            "datefin":"Présent"
+         },
+         {
+            "poste":"Chargé logistique (Planning & Ordonnancement)",
+            "entreprise":"SGT – Société Générale des Techniques",
+            "description": [
+                "Élaboration et optimisation des plans de production multi-horizons sous contraintes capacitaires",
+                "Coordination des flux entre production, achats, logistique et commerce pour optimiser la performance globale",
+                "Suivi et analyse des KPI (taux de service, respect des délais, rendement) et mise en place d’actions correctives",
+                "Contribution à la prévision de la demande et à l’optimisation des approvisionnements"
+                ] ,
+            "datedebut":"05/2023",
+            "datefin":"10/2023"
+         },
+         {
+            "poste":"Data Team Leader (Logistique)",
+            "entreprise":"UPS (United Parcel Service)",
+            "description":["Analyse des besoins clients et conception de solutions logistiques optimisées",
+            "Pilotage des flux internationaux (import/export, distribution) dans un environnement contraint",
+            "Suivi des performances et mise en œuvre d’actions d’amélioration continue basées sur KPI",
+            "Coordination interservices (douanes, transporteurs, clients) pour garantir la fiabilité des opérations",
+            "Exploitation des données pour améliorer la prise de décision opérationnelle"],
+            "datedebut":"02/2022",
+            "datefin":"03/2023"
+         },
+         {
+            "poste":"Chargé de la Logistique & Suivi des Opérations",
+            "entreprise":"UPS (United Parcel Service)",
+            "description":["Planification des opérations et allocation des ressources logistiques",
+            "Analyse de performance et optimisation des processus",
+            "Contribution à la prévision des volumes et à la planification opérationnelle"],
+            "datedebut":"02/2021",
+            "datefin":"02/2022"
+         },
+         {
+            "poste":"Chargé Export",
+            "entreprise":"UPS (United Parcel Service)",
+            "description":[
+"Gestion des flux internationaux et conformité douanière",
+"Optimisation des délais de traitement des expéditions",
+"Coordination des acteurs de la chaîne logistique internationale"],
+            "datedebut":"01/2020",
+            "datefin":"02/2021"
+         }
+      ],
+      "formations":[
+         {
+            "diplome":"Master 2 Transport et Logistique Internationale",
+            "ecole":"INSSET (Institut Supérieur des Sciences Et Techniques), Université de Picardie Jules Verne",
+            "annee":"2026-2027 (Alternance prévue)",
+            "description":[
+                
+"Pilotage et optimisation de la supply chain et des flux logistiques internationaux",
+"Analyse de données et amélioration continue pour la performance opérationnelle",
+"Gestion de projets logistiques dans un environnement international et digitalisé"
+            ]
+         },
+         {
+            "diplome":"Master Logistique et Transport",
+            "ecole":"E.N.S.T (École Nationale Supérieure de Technologie)",
+            "annee":"2019 – 2021",
+            "description":["Mémoire : Optimisation des tournées de collecte et livraison (type VRP) chez UPS Algérie"]
+         },
+         {
+            "diplome":"Licence Logistique et Transport",
+            "ecole":"E.N.S.T (École Nationale Supérieure de Technologie)",
+            "annee":"2016 – 2019",
+            "description":["Mémoire : Optimisation des tournées de collecte et livraison (type VRP) chez UPS Algérie"]
+         }
+      ],
+      "projets":[
+        {"nom":"Open tickets",
+         "lien":"https://github.com/mlamine300/open-tickets",
+         "date":"09/2025 - 03/2026",
+         "detail":"OpenTickets est une plateforme moderne de gestion des tickets et des réclamations qui aide les entreprises à gérer la communication interne et externe entre les agences, les départements et les équipes opérationnelles."   
+},
+{"nom":"RouteXTMS ",
+         "lien":"https://github.com/mlamine300/RouteXTMS ",
+          "date":"06/2026 – aujourd'hui",
+         "detail":"RouteXTMS est un logiciel de gestion logistique qui permet aux entreprises d’automatiser et d’optimiser les opérations de la chaîne d’approvisionnement, y compris le suivi des expéditions, la gestion du fret et la livraison au dernier kilomètre."   
+},
+{"nom":"BuyNext",
+         "lien":"https://github.com/mlamine300/Buynext",
+         "date":"06/2026 – aujourd'hui",
+         "detail":"Une plateforme e-commerce full-stack évolutive construite avec une architecture de microservices à l’intérieur d’un monorepo Turborepo. Le projet sépare chaque domaine d’activité en services indépendants, permettant une meilleure évolutivité, maintenabilité et tolérance aux pannes tout en partageant des packages communs entre les applications."   
+}
+      ]
+   },
+
+
+"imgUrl":"https://ik.imagekit.io/lamine300/lamine%20img.png?updatedAt=1783269940792"
+}

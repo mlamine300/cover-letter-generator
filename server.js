@@ -1,8 +1,18 @@
-const express = require("express");
-const puppeteer = require("puppeteer");
+
+import express from "express"
+import fs from "fs"
+import path from "path"
+import puppeteer from "puppeteer"
+import { v4 as uuid } from "uuid"
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const path = require("path");
+
+import generatePdf from "./pdf/generatePdf.js";
+
 
 app.use("/cover-letters", express.static(path.join(__dirname, "public/cover-letters")));
 app.use("/cvs", express.static(path.join(__dirname, "public/cvs")));
@@ -242,15 +252,19 @@ ${name}
 //     "--disable-gpu",
 //   ],
 // });
-const browser = await puppeteer.launch({
-  executablePath:
-    "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome",
+const launchOptions = {
   headless: true,
   args: [
     "--no-sandbox",
     "--disable-setuid-sandbox",
   ],
-});
+};
+
+if (process.env.CHROME_EXECUTABLE_PATH) {
+  launchOptions.executablePath = process.env.CHROME_EXECUTABLE_PATH;
+}
+
+const browser = await puppeteer.launch(launchOptions);
 
         const page = await browser.newPage();
 
@@ -284,11 +298,7 @@ const browser = await puppeteer.launch({
 
         //res.send(pdf);
 
-        const fs = require("fs");
-const path = require("path");
-const { v4: uuid } = require("uuid");
-
-const filename = `${uuid()}.pdf`;
+        const filename = `${uuid()}.pdf`;
 
 const filepath = path.join(
     __dirname,
@@ -335,522 +345,9 @@ res.json({
     }
 });
 
-function generateCVHtmlold(cv) {
-    // 1. Vérification rigoureuse de la structure du JSON
-    
-    if (!cv || typeof cv !== 'object') {
-        throw new Error("Erreur de validation : L'objet requis 'cv' est manquant.");
-    }
-    
-   
-    const champsObligatoires = ['titre', 'profil', 'competences', 'experiences', 'formations'];
-    
-    for (const champ of champsObligatoires) {
-        if (!cv[champ]) {
-            throw new Error(`Erreur de validation : Le champ obligatoire '${champ}' est manquant dans l'objet 'cv'.`);
-        }
-    }
-    
-    if (!Array.isArray(cv.competences)) {
-        throw new Error("Erreur de validation : Le champ 'competences' doit être un tableau.");
-    }
-    if (!Array.isArray(cv.experiences)) {
-        throw new Error("Erreur de validation : Le champ 'experiences' doit être un tableau.");
-    }
-    if (!Array.isArray(cv.formations)) {
-        throw new Error("Erreur de validation : Le champ 'formations' doit être un tableau.");
-    }
 
-    // 2. Traitement du titre (Séparation Nom et Intitulé du Poste)
-    const parts = cv.titre.split(" - ");
-    const nom = parts[0] ? parts[0].toUpperCase() : "MOHAMED LAMINE LAOUFI";
-    const intitulePoste = parts[1] ? parts[1] : "Candidature Alternance Agent Logistique";
 
-    // 3. Génération dynamique des Compétences
-    const competencesHtml = cv.competences.map(comp => `<li>${comp}</li>`).join('\n                        ');
-
-    // 4. Génération dynamique des Formations
-    const formationsHtml = cv.formations.map(form => {
-        let ecoleStr = form.ecole || '';
-        let locationStr = '';
-        
-        // Extraction de la localisation si séparée par une virgule
-        if (ecoleStr.includes(',')) {
-            const splitted = ecoleStr.split(',');
-            ecoleStr = splitted[0].trim();
-            locationStr = splitted[1].trim();
-        }
-        
-        return `
-                    <div class="education-item">
-                        <div class="education-header">
-                            <span class="education-title">${form.diplome || ''}</span>
-                            <span class="education-years">${form.annee || ''}</span>
-                        </div>
-                        <div class="education-sub">
-                            <span class="education-sub-inst">${ecoleStr}</span>
-                            ${locationStr ? `<span class="education-sub-loc">${locationStr}</span>` : ''}
-                        </div>
-                    </div>`;
-    }).join('\n');
-
-    // Dates fixes d'origine de l'historique de l'alternant pour préserver l'historique chronologique
-    const datesOrigine = {
-        "Auditeur Logistique": "11/2025 – 06/2026",
-        "Chargé logistique (Planning & Ordonnancement)": "05/2025 – 10/2025",
-        "Data Team Leader (Logistique)": "02/2023 – 03/2025",
-        "Chargé de la Logistique & Suivi des Opérations": "02/2022 – 02/2023",
-        "Chargé Export": "01/2021 – 02/2022"
-    };
-
-    // 5. Génération dynamique des Expériences (avec conversion des phrases en puces descriptives)
-    const experiencesHtml = cv.experiences.map(exp => {
-        const dateVal = datesOrigine[exp.poste] || "En cours";
-        
-        // Découpage automatique de la description par points pour former des puces textuelles propres
-        const phrases = exp.description ? exp.description.split('.').map(s => s.trim()).filter(s => s.length > 0) : [];
-        let detailsHtml = '';
-        if (phrases.length > 0) {
-            detailsHtml = `
-                            <ul class="exp-details">
-                                ${phrases.map(p => `<li>${p}</li>`).join('\n                                ')}
-                            </ul>`;
-        }
-
-        let entrepriseStr = exp.entreprise || '';
-        let locationStr = "Oued Semar-Alger";
-        
-        if (entrepriseStr.includes('–')) {
-            const splitted = entrepriseStr.split('–');
-            entrepriseStr = splitted[0].trim();
-            locationStr = splitted[1].trim();
-        } else if (entrepriseStr.includes('UPS')) {
-            locationStr = exp.poste.includes("Data") ? "Hydra-Alger" : "Oued Semar-Alger";
-        }
-
-        return `
-                        <div class="experience-item">
-                            <div class="exp-header">
-                                <span class="exp-title">${exp.poste || ''}</span>
-                                <span class="exp-dates">${dateVal}</span>
-                            </div>
-                            <div class="exp-sub">
-                                <span class="exp-company">${entrepriseStr}</span>
-                                <span class="exp-location">${locationStr}</span>
-                            </div>
-                            ${detailsHtml}
-                        </div>`;
-    }).join('\n');
-
-    // 6. Retour du code HTML formaté sous forme de chaîne de caractères
-    return `<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV - ${nom}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f3f4f6;
-            color: #333333;
-            line-height: 1.4;
-            padding: 40px 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .cv-container {
-            width: 210mm;
-            min-height: 297mm;
-            background-color: #ffffff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        .header {
-            background-color: #121e2b;
-            color: #ffffff;
-            padding: 35px 40px 35px 210px;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-        }
-        .header h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-        .header h1 span {
-            font-weight: 300;
-            font-size: 16px;
-            text-transform: none;
-        }
-        .header h2 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 13px;
-            font-weight: 400;
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            color: #d1d5db;
-        }
-        .header .mobility {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #ffffff;
-        }
-        .avatar-container {
-            position: absolute;
-            top: 25px;
-            left: 40px;
-            z-index: 10;
-        }
-        .avatar {
-            width: 135px;
-            height: 135px;
-            border-radius: 50%;
-            border: 4px solid #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            object-fit: cover;
-            background-color: #ffffff;
-        }
-        .main-content {
-            display: flex;
-            flex: 1;
-        }
-        .left-col {
-            width: 36%;
-            padding: 40px 25px 30px 40px;
-            border-right: 1px solid #f1f5f9;
-        }
-        .right-col {
-            width: 64%;
-            padding: 25px 40px 30px 30px;
-            display: flex;
-            flex-direction: column;
-        }
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px 15px;
-            margin-bottom: 25px;
-            font-size: 11px;
-        }
-        .contact-item {
-            display: flex;
-            align-items: center;
-            color: #374151;
-            text-decoration: none;
-        }
-        .contact-item i {
-            width: 16px;
-            color: #121e2b;
-            margin-right: 8px;
-            font-size: 12px;
-            text-align: center;
-        }
-        .contact-item a {
-            color: #374151;
-            text-decoration: none;
-        }
-        .contact-item a:hover {
-            text-decoration: underline;
-        }
-        .section-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            color: #121e2b;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-top: 25px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-        }
-        .section-title::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background-color: #121e2b;
-            margin-left: 12px;
-        }
-        .left-col .section-title {
-            margin-top: 20px;
-        }
-        .profile-text {
-            font-size: 10.5px;
-            line-height: 1.5;
-            color: #4b5563;
-            margin-bottom: 12px;
-            text-align: justify;
-        }
-        .education-item {
-            margin-bottom: 12px;
-            font-size: 11px;
-        }
-        .education-header {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 700;
-            color: #121e2b;
-            margin-bottom: 2px;
-        }
-        .education-years {
-            color: #4b5563;
-            font-weight: 600;
-            white-space: nowrap;
-            margin-left: 10px;
-        }
-        .education-sub {
-            font-size: 10px;
-            color: #4b5563;
-            font-weight: 600;
-            margin-bottom: 4px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .education-sub-loc {
-            color: #6b7280;
-        }
-        .skills-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .skills-list li {
-            font-size: 10.5px;
-            color: #4b5563;
-            position: relative;
-            padding-left: 12px;
-            margin-bottom: 4px;
-            line-height: 1.35;
-        }
-        .skills-list li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: #121e2b;
-        }
-        .languages-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .languages-list li {
-            font-size: 11px;
-            color: #4b5563;
-            margin-bottom: 3px;
-        }
-        .languages-list li strong {
-            color: #121e2b;
-        }
-        .experience-timeline {
-            position: relative;
-            border-left: 1px solid #121e2b;
-            padding-left: 20px;
-            margin-left: 10px;
-            margin-top: 5px;
-        }
-        .experience-item {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        .experience-item::before {
-            content: "";
-            position: absolute;
-            left: -25.5px;
-            top: 4px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #ffffff;
-            border: 2px solid #121e2b;
-        }
-        .exp-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 2px;
-        }
-        .exp-title {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #121e2b;
-        }
-        .exp-dates {
-            font-size: 11px;
-            font-weight: 700;
-            color: #121e2b;
-            white-space: nowrap;
-            margin-left: 10px;
-        }
-        .exp-sub {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: 600;
-            color: #4b5563;
-            margin-bottom: 6px;
-        }
-        .exp-company {
-            text-transform: uppercase;
-        }
-        .exp-location {
-            color: #6b7280;
-        }
-        .exp-details {
-            list-style-type: disc;
-            padding-left: 15px;
-            font-size: 10.5px;
-            color: #4b5563;
-            line-height: 1.4;
-        }
-        .exp-details li {
-            margin-bottom: 3px;
-        }
-        .interests-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px 20px;
-            margin-top: 5px;
-        }
-        .interests-list {
-            list-style-type: none;
-        }
-        .interests-list li {
-            font-size: 11px;
-            color: #4b5563;
-            position: relative;
-            padding-left: 10px;
-            margin-bottom: 3px;
-        }
-        .interests-list li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: #121e2b;
-        }
-        @media print {
-            body {
-                background-color: #ffffff;
-                padding: 0;
-            }
-            .cv-container {
-                box-shadow: none;
-                width: 100%;
-                height: 297mm;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="cv-container">
-        <div class="avatar-container">
-            <img class="avatar" src="https://ik.imagekit.io/lamine300/photo%20profil%20(2).png" alt="${nom}">
-        </div>
-        <header class="header">
-            <h1>${nom} <span>(27 ans)</span></h1>
-            <h2>${intitulePoste}</h2>
-            <p class="mobility">Mobilité : Hautes-de-France, Île-de-France et toute la France</p>
-        </header>
-        <div class="main-content">
-            <aside class="left-col">
-                <section>
-                    <h3 class="section-title">Profil</h3>
-                    <p class="profile-text">${cv.profil}</p>
-                </section>
-                <section>
-                    <h3 class="section-title">Formation</h3>
-                    ${formationsHtml}
-                </section>
-                <section>
-                    <h3 class="section-title">Compétences</h3>
-                    <ul class="skills-list">
-                        ${competencesHtml}
-                    </ul>
-                </section>
-                <section>
-                    <h3 class="section-title">Langues</h3>
-                    <ul class="languages-list">
-                        <li><strong>Arabe :</strong> Langue maternelle</li>
-                        <li><strong>Français :</strong> TCF C1 (professionnel)</li>
-                        <li><strong>Anglais :</strong> EF SET C1 (professionnel)</li>
-                    </ul>
-                </section>
-            </aside>
-            <main class="right-col">
-                <section class="contact-grid">
-                    <div class="contact-item">
-                        <i class="fab fa-linkedin"></i>
-                        <a href="https://www.linkedin.com/in/mohamed-laoufi" target="_blank">linkedin.com/in/mohamed-laoufi</a>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <a href="mailto:laoufi.mohamed.lamine@gmail.com">laoufi.mohamed.lamine@gmail.com</a>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fab fa-github"></i>
-                        <a href="https://github.com/mlamine300" target="_blank">github.com/mlamine300</a>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-globe"></i>
-                        <a href="https://laoufi-mohamed-lamine.vercel.app/" target="_blank">laoufi-mohamed-lamine.vercel.app/</a>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span>0 676 21 77 01</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>23 Rue des Beguinages, 02100 Saint-Quentin, France</span>
-                    </div>
-                </section>
-                <section>
-                    <h3 class="section-title">Expérience Professionnelle</h3>
-                    <div class="experience-timeline">
-                        ${experiencesHtml}
-                    </div>
-                </section>
-                <section>
-                    <h3 class="section-title">Centres d'Intérêt</h3>
-                    <div class="interests-grid">
-                        <ul class="interests-list">
-                            <li>Veille technologique & IA</li>
-                            <li>Développement web</li>
-                            <li>Lecture business & technologie</li>
-                        </ul>
-                        <ul class="interests-list">
-                            <li>Finance et Technologie (FinTech)</li>
-                            <li>Physique et Cosmologie</li>
-                        </ul>
-                    </div>
-                </section>
-            </main>
-        </div>
-    </div>
-</body>
-</html>`;
-}
-
-function generateNewCVHtml(cv) {
+function generateNewCVHtmlold(cv) {
     // 1. Vérification de la présence et de la validité de tous les champs requis
     
     if (!cv || typeof cv !== 'object') {
@@ -1351,86 +848,103 @@ function generateNewCVHtml(cv) {
 </html>`;
 }
 
+app.post("/generatecv",async(req,res)=>{
+
+ try {
+    const buffer = await generatePdf(req.body);
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename=cv.pdf',
+    });
+
+    res.send(buffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('PDF generation failed');
+  }
+
+})
 
 
-app.post("/generatecv",async(req,res)=> {
-const {cv}=req.body;
-if(!cv)return res.status(400).json({message:"cv is required"});
-const cvHtml=generateNewCVHtml(cv);
+// app.post("/generatecv",async(req,res)=> {
+// const {cv}=req.body;
+// if(!cv)return res.status(400).json({message:"cv is required"});
+// const cvHtml=generateNewCVHtml(cv);
 
 
 
-//   const browser = await puppeteer.launch({
-//   headless: "new",
+// //   const browser = await puppeteer.launch({
+// //   headless: "new",
+// //   args: [
+// //     "--no-sandbox",
+// //     "--disable-setuid-sandbox",
+// //     "--disable-dev-shm-usage",
+// //     "--disable-gpu",
+// //   ],
+// // });
+// const browser = await puppeteer.launch({
+//   executablePath:
+//     "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome",
+//   headless: true,
 //   args: [
 //     "--no-sandbox",
 //     "--disable-setuid-sandbox",
-//     "--disable-dev-shm-usage",
-//     "--disable-gpu",
 //   ],
 // });
-const browser = await puppeteer.launch({
-  executablePath:
-    "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome",
-  headless: true,
-  args: [
-    "--no-sandbox",
-    "--disable-setuid-sandbox",
-  ],
-});
 
-        const page = await browser.newPage();
+//         const page = await browser.newPage();
 
-        await page.setViewport({
-            width: 1240,
-            height: 1754
-        });
+//         await page.setViewport({
+//             width: 1240,
+//             height: 1754
+//         });
 
-        await page.setContent(cvHtml, {
-            waitUntil: "networkidle0"
-        });
+//         await page.setContent(cvHtml, {
+//             waitUntil: "networkidle0"
+//         });
 
         
 
-        const fs = require("fs");
-const path = require("path");
-const { v4: uuid } = require("uuid");
+//         const fs = require("fs");
+// const path = require("path");
+// const { v4: uuid } = require("uuid");
 
-const filename = `${uuid()}.pdf`;
+// const filename = `${uuid()}.pdf`;
 
-const filepath = path.join(
-    __dirname,
-    "public",
-    "cvs",
-    filename
-);
+// const filepath = path.join(
+//     __dirname,
+//     "public",
+//     "cvs",
+//     filename
+// );
 
-await page.pdf({
-    path: filepath,
-    format: "A4",
-    printBackground: true,
-    preferCSSPageSize: true,
-    margin: {
-        top: "2mm",
-        bottom: "2mm",
-        left: "2mm",
-        right: "2mm"
-    }
-});
+// await page.pdf({
+//     path: filepath,
+//     format: "A4",
+//     printBackground: true,
+//     preferCSSPageSize: true,
+//     margin: {
+//         top: "2mm",
+//         bottom: "2mm",
+//         left: "2mm",
+//         right: "2mm"
+//     }
+// });
 
-await browser.close();
+// await browser.close();
 
-const baseUrl =
-    process.env.BASE_URL ||
-    `${req.protocol}://${req.get("host")}`;
+// const baseUrl =
+//     process.env.BASE_URL ||
+//     `${req.protocol}://${req.get("host")}`;
 
-res.json({
+// res.json({
 
-    success: true,
+//     success: true,
 
-    url: `${baseUrl}/cvs/${filename}`
+//     url: `${baseUrl}/cvs/${filename}`
 
-});
+// });
 
      
 
@@ -1438,7 +952,7 @@ res.json({
 
 
 
-})
+// })
 const server=app.listen(3000,()=>{
     console.log("Server started");
 });

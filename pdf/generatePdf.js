@@ -1,7 +1,7 @@
 import React from 'react';
 import { pdf } from '@react-pdf/renderer';
 import ResumeDocument from './ResumeDocument';
-import CoverLetterDocument from './coverLetterDocument';
+import CoverLetterDocument from './CoverLetterDocument';
 
  export async function generateResumePdf(cvData) {
  const blob = await pdf(

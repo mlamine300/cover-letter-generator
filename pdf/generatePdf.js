@@ -1,9 +1,9 @@
 import React from 'react';
 import { pdf } from '@react-pdf/renderer';
 import ResumeDocument from './ResumeDocument';
+import CoverLetterDocument from './coverLetterDocument';
 
-
- async function generatePdf(cvData) {
+ export async function generateResumePdf(cvData) {
  const blob = await pdf(
   React.createElement(ResumeDocument, {
     cv:cvData.cv, photoUrl: cvData.imgUrl
@@ -14,4 +14,10 @@ import ResumeDocument from './ResumeDocument';
   return Buffer.from(await blob.arrayBuffer());
 }
 
-export default generatePdf
+ export async function generateCoverPdf(cvData) {
+ const blob = await pdf(
+  React.createElement(CoverLetterDocument,cvData)
+).toBlob();
+
+  return Buffer.from(await blob.arrayBuffer());
+}

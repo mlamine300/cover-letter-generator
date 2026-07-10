@@ -16,8 +16,6 @@
     "@react-pdf/renderer": "^4.5.1",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "puppeteer": "^22.15.0",
-    "react-pdf-tailwind": "^3.0.0",
     "uuid": "^14.0.1"
   },
   "devDependencies": {

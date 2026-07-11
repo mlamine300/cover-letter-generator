@@ -14,7 +14,16 @@ const app = express();
 
 import  {generateResumePdf, generateCoverPdf } from "./pdf/generatePdf.js";
 
-
+function convertToUrlSlug(str) {
+  return str
+    .toLowerCase()                                     // 1. Lowercase the string
+    .normalize("NFD")                                  // 2. Separate accents from letters
+    .replace(/[\u0300-\u036f]/g, "")                   // 3. Remove all accents
+    .replace(/[^a-z0-9\s-]/g, "")                      // 4. Remove all special characters
+    .trim()                                            // 5. Remove leading/trailing spaces
+    .replace(/\s+/g, "-")                              // 6. Replace spaces with hyphens
+    .replace(/-+/g, "-");                              // 7. Remove consecutive hyphens
+}
 app.use("/pdf", express.static(path.join(__dirname, "public/pdf")));
 //app.use("/cvs", express.static(path.join(__dirname, "public/cvs")));
 app.use(express.json());
@@ -32,7 +41,7 @@ app.post("/generatecover",async(req,res)=>{
     const fileName = `cover_ltr_laoufi_mohamed_lamine.pdf`;
     
     // 2. Définir le dossier de stockage sur le serveur (ex: dans un dossier 'public/uploads')
-    const uploadDir = path.join(__dirname, 'public','pdf',now.getTime().toString(),req.body.entreprise);
+    const uploadDir = path.join(__dirname, 'public','pdf',now.getTime().toString(),convertToUrlSlug(convertToUrlSlug(req.body.entreprise)));
     
     // Sécurité : Crée le dossier s'il n'existe pas encore
     await fs.mkdir(uploadDir, { recursive: true });
@@ -44,7 +53,7 @@ app.post("/generatecover",async(req,res)=>{
     await fs.writeFile(filePath, buffer);
 
     // 4. Générer l'URL absolue (fonctionne en local comme en production)
-    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${now.getTime()}/${req.body.entreprise}/${fileName}`;
+    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${now.getTime()}/${convertToUrlSlug(req.body.entreprise)}/${fileName}`;
 
     // 5. Renvoyer l'URL au format JSON
     res.status(200).json({ 
@@ -61,16 +70,16 @@ app.post("/generatecover",async(req,res)=>{
 
 
 app.post("/generatecv",async(req,res)=>{
-
+http://localhost:3000/pdf/iscod-pour-son-entreprise-partenaire/1783779612137/cv_ltr_laoufi_mohamed_lamine.pdf
    try {
-    const now=new Date();
+    const now=new Date().getTime().toString();
     const buffer = await generateResumePdf(req.body);
 
     // 1. Définir un nom de fichier unique (avec un timestamp pour éviter les écrasements)
     const fileName = `cv_ltr_laoufi_mohamed_lamine.pdf`;
     
     // 2. Définir le dossier de stockage sur le serveur (ex: dans un dossier 'public/uploads')
-    const uploadDir = path.join(__dirname, 'public','pdf',now.getTime().toString() ,req.body.entreprise);
+    const uploadDir = path.join(__dirname, 'public','pdf',now ,convertToUrlSlug(req.body.entreprise));
     
     // Sécurité : Crée le dossier s'il n'existe pas encore
     await fs.mkdir(uploadDir, { recursive: true });
@@ -83,7 +92,7 @@ app.post("/generatecv",async(req,res)=>{
     
 
     // 4. Générer l'URL absolue (fonctionne en local comme en production)
-    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${req.body.entreprise}/${now.getTime()}/${fileName}`;
+    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${now}/${convertToUrlSlug(req.body.entreprise)}/${fileName}`;
 
     // 5. Renvoyer l'URL au format JSON
     res.status(200).json({ 

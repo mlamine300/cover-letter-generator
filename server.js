@@ -25,13 +25,14 @@ app.get("/", (req,res)=>{
 
 app.post("/generatecover",async(req,res)=>{
     try {
+        const now=new Date();
     const buffer = await generateCoverPdf(req.body);
 
     // 1. Définir un nom de fichier unique (avec un timestamp pour éviter les écrasements)
     const fileName = `cover_ltr_laoufi_mohamed_lamine.pdf`;
     
     // 2. Définir le dossier de stockage sur le serveur (ex: dans un dossier 'public/uploads')
-    const uploadDir = path.join(__dirname, 'public','pdf',req.body.entreprise);
+    const uploadDir = path.join(__dirname, 'public','pdf',now.getTime().toString(),req.body.entreprise);
     
     // Sécurité : Crée le dossier s'il n'existe pas encore
     await fs.mkdir(uploadDir, { recursive: true });
@@ -43,13 +44,13 @@ app.post("/generatecover",async(req,res)=>{
     await fs.writeFile(filePath, buffer);
 
     // 4. Générer l'URL absolue (fonctionne en local comme en production)
-    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${req.body.entreprise}/${fileName}`;
+    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${now.getTime()}/${req.body.entreprise}/${fileName}`;
 
     // 5. Renvoyer l'URL au format JSON
     res.status(200).json({ 
       success: true,
-      message: 'PDF généré et sauvegardé avec succès',
-      url: fileUrl 
+      message: 'coverLetter généré et sauvegardé avec succès',
+      coverLetterURL: fileUrl 
     });
 
   } catch (err) {
@@ -62,13 +63,14 @@ app.post("/generatecover",async(req,res)=>{
 app.post("/generatecv",async(req,res)=>{
 
    try {
+    const now=new Date();
     const buffer = await generateResumePdf(req.body);
 
     // 1. Définir un nom de fichier unique (avec un timestamp pour éviter les écrasements)
     const fileName = `cv_ltr_laoufi_mohamed_lamine.pdf`;
     
     // 2. Définir le dossier de stockage sur le serveur (ex: dans un dossier 'public/uploads')
-    const uploadDir = path.join(__dirname, 'public','pdf',req.body.entreprise);
+    const uploadDir = path.join(__dirname, 'public','pdf',now.getTime().toString() ,req.body.entreprise);
     
     // Sécurité : Crée le dossier s'il n'existe pas encore
     await fs.mkdir(uploadDir, { recursive: true });
@@ -78,15 +80,16 @@ app.post("/generatecv",async(req,res)=>{
 
     // 3. Sauvegarder le buffer en tant que fichier PDF
     await fs.writeFile(filePath, buffer);
+    
 
     // 4. Générer l'URL absolue (fonctionne en local comme en production)
-    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${req.body.entreprise}/${fileName}`;
+    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${req.body.entreprise}/${now.getTime()}/${fileName}`;
 
     // 5. Renvoyer l'URL au format JSON
     res.status(200).json({ 
       success: true,
-      message: 'PDF généré et sauvegardé avec succès',
-      url: fileUrl 
+      message: 'CV généré et sauvegardé avec succès',
+      resumeURL: fileUrl 
     });
 
   } catch (err) {

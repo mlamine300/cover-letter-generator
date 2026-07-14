@@ -33,15 +33,18 @@ app.get("/", (req,res)=>{
 });
 
 app.post("/generatecover",async(req,res)=>{
-    try {
+    
+  try {
         const now=new Date();
+        const company= convertToUrlSlug(req.body.entreprise)||"none";
+        
     const buffer = await generateCoverPdf(req.body);
 
     // 1. Définir un nom de fichier unique (avec un timestamp pour éviter les écrasements)
-    const fileName = `cover_ltr_laoufi_mohamed_lamine.pdf`;
+    const fileName = `${company}-cover-ltr-laoufi-mohamed-lamine.pdf`;
     
     // 2. Définir le dossier de stockage sur le serveur (ex: dans un dossier 'public/uploads')
-    const uploadDir = path.join(__dirname, 'public','pdf',now.getTime().toString(),convertToUrlSlug(convertToUrlSlug(req.body.entreprise)));
+    const uploadDir = path.join(__dirname, 'public','pdf',company,now.getTime().toString());
     
     // Sécurité : Crée le dossier s'il n'existe pas encore
     await fs.mkdir(uploadDir, { recursive: true });
@@ -53,7 +56,7 @@ app.post("/generatecover",async(req,res)=>{
     await fs.writeFile(filePath, buffer);
 
     // 4. Générer l'URL absolue (fonctionne en local comme en production)
-    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${now.getTime()}/${convertToUrlSlug(req.body.entreprise)}/${fileName}`;
+    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${company}/${now.getTime()}/${fileName}`;
 
     // 5. Renvoyer l'URL au format JSON
     res.status(200).json({ 
@@ -73,13 +76,14 @@ app.post("/generatecv",async(req,res)=>{
 http://localhost:3000/pdf/iscod-pour-son-entreprise-partenaire/1783779612137/cv_ltr_laoufi_mohamed_lamine.pdf
    try {
     const now=new Date().getTime().toString();
+    const company= convertToUrlSlug(req.body.entreprise)||"none";
     const buffer = await generateResumePdf(req.body);
-
+    
     // 1. Définir un nom de fichier unique (avec un timestamp pour éviter les écrasements)
-    const fileName = `cv_ltr_laoufi_mohamed_lamine.pdf`;
+    const fileName = `cv-${company}-ltr-laoufi-mohamed-lamine.pdf`;
     
     // 2. Définir le dossier de stockage sur le serveur (ex: dans un dossier 'public/uploads')
-    const uploadDir = path.join(__dirname, 'public','pdf',now ,convertToUrlSlug(req.body.entreprise));
+    const uploadDir = path.join(__dirname, 'public','pdf',company,now );
     
     // Sécurité : Crée le dossier s'il n'existe pas encore
     await fs.mkdir(uploadDir, { recursive: true });
@@ -92,7 +96,7 @@ http://localhost:3000/pdf/iscod-pour-son-entreprise-partenaire/1783779612137/cv_
     
 
     // 4. Générer l'URL absolue (fonctionne en local comme en production)
-    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${now}/${convertToUrlSlug(req.body.entreprise)}/${fileName}`;
+    const fileUrl = `${req.protocol}://${req.get('host')}/pdf/${company}/${now}/${fileName}`;
 
     // 5. Renvoyer l'URL au format JSON
     res.status(200).json({ 

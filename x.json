@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generated schema for Root",
+  "type": "object",
+  "properties": {
+    "cv": {
+      "type": "object",
+      "properties": {
+        "nom": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "num": {
+          "type": "string"
+        },
+        "siteweb": {
+          "type": "string"
+        },
+        "linkedin": {
+          "type": "string"
+        },
+        "github": {
+          "type": "string"
+        },
+        "titre": {
+          "type": "string"
+        },
+        "profil": {
+          "type": "string"
+        },
+        "competences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "experiences": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "poste": {
+                "type": "string"
+              },
+              "entreprise": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },"datedebut":{
+                "type":"string"
+              },"datefin":{
+                "type":"string"
+              }
+            },
+            "required": [
+              "poste",
+              "entreprise",
+              "description",
+              "datedebut",
+              "datefin"
+            ]
+          }
+        },
+        "formations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "diplome": {
+                "type": "string"
+              },
+              "ecole": {
+                "type": "string"
+              },
+              "annee": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "diplome",
+              "ecole",
+              "annee"
+            ]
+          }
+        }
+      },
+      "required": [
+        "nom",
+        "email",
+        "num",
+        "siteweb",
+        "linkedin",
+        "github",
+        "titre",
+        "profil",
+        "competences",
+        "experiences",
+        "formations"
+      ]
+    }
+  },
+  "required": [
+    "cv"
+  ]
+}
